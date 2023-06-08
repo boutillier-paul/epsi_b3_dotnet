@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace epsi_b3_dotnet
@@ -25,6 +26,10 @@ namespace epsi_b3_dotnet
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Mon API", Version = "v1" });
             });
+
+            services.AddDbContext<SqlLiteDbContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("SQLiteConnection")));
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

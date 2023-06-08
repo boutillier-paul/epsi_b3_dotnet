@@ -24,19 +24,23 @@ public enum EtatPlat
     Livre
 }
 
-
 [Route("api/[controller]")]
 [ApiController]
 public class CommandesController : ControllerBase
 {
-    private static List<Commande> _commandes = new List<Commande>();
-    private static int _commandeId = 1;
+    private readonly SqlLiteDbContext _dbContext;
+
+    public CommandesController(SqlLiteDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
 
     // GET api/commandes
     [HttpGet]
     public ActionResult<IEnumerable<Commande>> GetCommandes()
     {
-        return _commandes;
+        var commandes = _dbContext.Commandes.ToList();
+        return commandes;
     }
 
     // POST api/commandes
@@ -45,12 +49,13 @@ public class CommandesController : ControllerBase
     {
         var commande = new Commande
         {
-            Id = _commandeId++,
+            Id = _dbContext.Commandes.Count() + 1,
             Plats = plats,
             Livre = false
         };
 
-        _commandes.Add(commande);
+        _dbContext.Commandes.Add(commande);
+        _dbContext.SaveChanges();
 
         return CreatedAtAction(nameof(GetCommande), new { id = commande.Id }, commande);
     }
@@ -59,7 +64,7 @@ public class CommandesController : ControllerBase
     [HttpGet("{id}")]
     public ActionResult<Commande> GetCommande(int id)
     {
-        var commande = _commandes.FirstOrDefault(c => c.Id == id);
+        var commande = _dbContext.Commandes.FirstOrDefault(c => c.Id == id);
 
         if (commande == null)
         {
@@ -73,7 +78,7 @@ public class CommandesController : ControllerBase
     [HttpPut("{id}/livre")]
     public IActionResult MarkCommandeLivre(int id)
     {
-        var commande = _commandes.FirstOrDefault(c => c.Id == id);
+        var commande = _dbContext.Commandes.FirstOrDefault(c => c.Id == id);
 
         if (commande == null)
         {
@@ -81,6 +86,7 @@ public class CommandesController : ControllerBase
         }
 
         commande.Livre = true;
+        _dbContext.SaveChanges();
 
         return NoContent();
     }
@@ -89,7 +95,7 @@ public class CommandesController : ControllerBase
     [HttpPut("{id}/plats/{platId}/etat")]
     public IActionResult UpdateEtatPlat(int id, int platId, [FromBody] EtatPlat etat)
     {
-        var commande = _commandes.FirstOrDefault(c => c.Id == id);
+        var commande = _dbContext.Commandes.FirstOrDefault(c => c.Id == id);
 
         if (commande == null)
         {
@@ -104,6 +110,7 @@ public class CommandesController : ControllerBase
         }
 
         plat.Etat = etat;
+        _dbContext.SaveChanges();
 
         return NoContent();
     }
