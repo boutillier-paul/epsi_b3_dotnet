@@ -14,6 +14,7 @@
 /home/paulb/Documents/dev/epsi_b3_dotnet/bin/Debug/net7.0/Microsoft.Extensions.DependencyModel.dll
 /home/paulb/Documents/dev/epsi_b3_dotnet/bin/Debug/net7.0/Microsoft.OpenApi.dll
 /home/paulb/Documents/dev/epsi_b3_dotnet/bin/Debug/net7.0/Mono.TextTemplating.dll
+/home/paulb/Documents/dev/epsi_b3_dotnet/bin/Debug/net7.0/Newtonsoft.Json.dll
 /home/paulb/Documents/dev/epsi_b3_dotnet/bin/Debug/net7.0/SQLitePCLRaw.batteries_v2.dll
 /home/paulb/Documents/dev/epsi_b3_dotnet/bin/Debug/net7.0/SQLitePCLRaw.core.dll
 /home/paulb/Documents/dev/epsi_b3_dotnet/bin/Debug/net7.0/SQLitePCLRaw.provider.e_sqlite3.dll

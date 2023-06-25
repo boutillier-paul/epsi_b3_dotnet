@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 
 public class Commande
 {
     public int Id { get; set; }
-    public List<Plat> Plats { get; set; }
+    public string Plats { get; set; }
     public bool Livre { get; set; }
 }
 
@@ -14,15 +15,9 @@ public class Plat
 {
     public int Id { get; set; }
     public string Nom { get; set; }
-    public EtatPlat Etat { get; set; }
+    public string Etat { get; set; }
 }
 
-public enum EtatPlat
-{
-    CommandeEnregistree,
-    EnPreparation,
-    Livre
-}
 
 [Route("api/[controller]")]
 [ApiController]
@@ -50,7 +45,7 @@ public class CommandesController : ControllerBase
         var commande = new Commande
         {
             Id = _dbContext.Commandes.Count() + 1,
-            Plats = plats,
+            Plats = JsonConvert.SerializeObject(plats),
             Livre = false
         };
 
@@ -93,7 +88,7 @@ public class CommandesController : ControllerBase
 
     // PUT api/commandes/{id}/plats/{platId}/etat
     [HttpPut("{id}/plats/{platId}/etat")]
-    public IActionResult UpdateEtatPlat(int id, int platId, [FromBody] EtatPlat etat)
+    public IActionResult UpdateEtatPlat(int id, int platId, [FromBody] string etat)
     {
         var commande = _dbContext.Commandes.FirstOrDefault(c => c.Id == id);
 
@@ -102,7 +97,8 @@ public class CommandesController : ControllerBase
             return NotFound();
         }
 
-        var plat = commande.Plats.FirstOrDefault(p => p.Id == platId);
+        var plats = JsonConvert.DeserializeObject<List<Plat>>(commande.Plats);
+        var plat = plats.FirstOrDefault(p => p.Id == platId);
 
         if (plat == null)
         {
@@ -110,6 +106,7 @@ public class CommandesController : ControllerBase
         }
 
         plat.Etat = etat;
+        commande.Plats = JsonConvert.SerializeObject(plats);
         _dbContext.SaveChanges();
 
         return NoContent();
